@@ -8,8 +8,8 @@ void restoringDivision(uint32_t dividend, uint32_t divisor, uint32_t& quotient, 
     int n = 32;
     while (n > 0) {
         AQ <<= 1;
-        int64_t temp = static_cast<int64_t>((AQ >> 32) & 0xFFFFFFFF); // Extract the upper 32 bits as signed
-        temp -= static_cast<int64_t>(divisor);
+        int32_t temp = static_cast<int32_t>((AQ >> 32) & 0xFFFFFFFF); // Extract the upper 32 bits
+        temp -= divisor;
         // Put the result back into AQ
         AQ &= 0xFFFFFFFF; // Clear the upper 32 bits
         AQ |= (static_cast<uint64_t>(static_cast<uint32_t>(temp)) << 32); // Set the upper 32 bits to the result
@@ -29,10 +29,12 @@ void restoringDivision(uint32_t dividend, uint32_t divisor, uint32_t& quotient, 
 }
 
 int main(){
-    uint32_t dividend = 101;
-    uint32_t divisor = 2;
+    uint32_t dividend = 0;
+    uint32_t divisor = 0;
     uint32_t quotient = 0;
     uint32_t remainder = 0;
+    std::cin>>dividend;
+    std::cin>>divisor;
     restoringDivision(dividend, divisor, quotient, remainder);
     std::cout << "Quotient: " << quotient << std::endl;
     std::cout << "Remainder: " << remainder << std::endl;

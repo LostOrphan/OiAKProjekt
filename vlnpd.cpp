@@ -30,12 +30,11 @@ void vlnpd_divide(uint32_t dividend, uint32_t divisor, uint32_t& quotient, uint3
         int leading_R = count_leading_zeros(R);
 
         //Dynamic Shift
-        int shift_amount = leading_R - leading_D-1;// - 1;
+        int shift_amount = leading_R - leading_D-1;
         if (shift_amount > 0) {
             if (shift_amount > 31 - count) {
                 shift_amount = 31 - count;
             }
-            // R = R << shift_amount;
             R=R << shift_amount;
             count = count + shift_amount;
         }
@@ -43,32 +42,20 @@ void vlnpd_divide(uint32_t dividend, uint32_t divisor, uint32_t& quotient, uint3
         //temporary variable to hold bits 62:31 of R
         int32_t tempDiv = static_cast<uint32_t>((R >> 31) & 0xFFFFFFFF); // Extract bits 62:31
         int32_t difference = tempDiv - divisor;
+        R = R<<1;
         if(difference<0){
-           R = R<<1;
         }
         else{
-            // if(count+1==32){
-            //              // Clear bits 62:31
-            // R &= ~(0xFFFFFFFFULL << 32);
-            // // Set bits 62:31 to 'difference' (cast to uint32_t to mask lower 32 bits)
-            // R |= (static_cast<uint64_t>(static_cast<uint32_t>(difference)) << 32);
-            // // Set bit 0
-            // R |= 1;   
-            // }
-            // else{
-            // Clear bits 62:31
-            R &= ~(0xFFFFFFFFULL << 31);
-            // Set bits 62:31 to 'difference' (cast to uint32_t to mask lower 32 bits)
-            R |= (static_cast<uint64_t>(static_cast<uint32_t>(difference)) << 31);
-            // Set bit 0
+            //clear bits 62:31
+            R &= ~(0xFFFFFFFFULL << 32);
+            //Set bits 62:31 to difference
+            R |= (static_cast<uint64_t>(static_cast<uint32_t>(difference)) << 32);
             R |= 1;
             std::cout << "R: " << std::bitset<64>(R) << std::endl;
-            // }
         }
-        if(count+1 == 32) {
+        if(++count == 32) {
             division_complete = 1;
-        }
-        // count++;
+        }   
         std::cout<<"count: " << count << std::endl;
     }
     std::cout << "R end: " << std::bitset<64>(R) << std::endl;
@@ -85,14 +72,12 @@ int main() {
     uint32_t quotient = 0, remainder = 0;
     std::cin>> dividend;
     std::cin>> divisor;
-    // uint8_t dividend = 6;
-    // uint8_t divisor = 2;
-    // uint8_t quotient = 0, remainder = 0;
-    // vlnpd(dividend, divisor, quotient, remainder);
+
     vlnpd_divide(dividend, divisor, quotient, remainder);
     std::cout << "Quotient: " << quotient << "\n";
     //cout binary
     std::cout << "Quotient: " << std::bitset<32>(quotient) << "\n";
+   
     std::cout << "Remainder: " << remainder << "\n";
     //cout binary
     std::cout << "Remainder: " << std::bitset<32>(remainder) << "\n";
