@@ -1,0 +1,5 @@
+verilog
+kompilacja: 
+    iverilog -o sim_out vlpnd.v tb_divider.v
+odpalenie wyniku:
+    vvp .\sim_out
