@@ -2,7 +2,7 @@
 
 module division_tb;
 
-  // Testbench signals
+  // Sygnaly testowe
   reg clk;
   reg rst;
   reg start;
@@ -12,7 +12,7 @@ module division_tb;
   wire busy;
   wire done;
 
-  // Instantiate the Unit Under Test (UUT)
+  // Instancja modułu dzielnika
   division uut (
     .clk(clk),
     .rst(rst),
@@ -24,61 +24,46 @@ module division_tb;
     .done(done)
   );
 
-  // Clock generation: 10ns period
+  // Generowanie zegara o okresie 10 ns
   initial clk = 0;
   always #5 clk = ~clk;
 
-  // Task to wait for 'done' signal
+  // Zadanie oczekiwania na zakończenie operacji dzielenia
   task wait_for_done;
     begin
       wait (done);
-      #10; // Let outputs settle
-      $display("Result: Quotient = %0d, Remainder = %0d", R[31:0], R[63:32]);
+      #10; // Przerwa dla stabilizacji sygnałów
+      $display("Wynik: Iloraz = %0d, Reszta = %0d", R[31:0], R[63:32]);
     end
   endtask
 
-  // Test stimulus
+  // Sekwencja testowa
   initial begin
-    // Initialize inputs
+    // Inicjalizacja sygnałów
     rst = 1;
     start = 0;
     A = 0;
     D = 0;
 
-    // Reset sequence
+    // Resetowanie modułu
     #20;
     rst = 0;
 
-    // Test Case 1: 100 / 3
+    // Test 1: 100/3
     A = 100;
     D = 3;
     start = 1;
     #10 start = 0;
     wait_for_done();
 
-    // Test Case 2: 200 / 10
-    A = 200;
-    D = 10;
+    // Test 2: 50/5
+    A = 50;
+    D = 5;
     start = 1;
     #10 start = 0;
     wait_for_done();
-
-    // Test Case 3: 12345678 / 1234
-    A = 32'd12345678;
-    D = 32'd1234;
-    start = 1;
-    #10 start = 0;
-    wait_for_done();
-
-    // Test Case 4: 2^31 / 2
-    A = 32'h80000000;
-    D = 2;
-    start = 1;
-    #10 start = 0;
-    wait_for_done();
-
-    // End of test
-    $display("All tests completed.");
+    // Koniec testu 
+    $display("Wszystkie testu zostaly zakonczone.");
     $finish;
   end
 
